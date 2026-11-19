@@ -1,0 +1,32 @@
+/* Clone-specific adjustments on top of the original stylesheets. Intentionally minimal. */
+
+/* ---- Neha Mishra content: additions that reuse the template's tokens ---- */
+.hero-portrait-link img,.bio-portrait img,.portrait-face img{object-position:50% 20%}
+.bio-about{max-width:46ch;margin:20px 0 0;color:var(--sc-ink-soft);font-size:15px;line-height:1.7}
+.bio-stats{display:flex;gap:40px;margin:28px 0 0}
+.bio-stats>div{margin:0}
+.bio-stats dt{color:var(--sc-ink-soft);font-size:12px;max-width:16ch;line-height:1.4}
+.bio-stats dd{margin:6px 0 0;font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.journey-roadmap{grid-template-columns:repeat(3,minmax(0,1fr))}
+.journey-second{padding-top:100px}
+.journey-third{padding-top:20px}
+.journey-points{margin:0;padding-left:18px;color:var(--sc-ink-soft);font-size:14px;line-height:1.6}
+.journey-points li+li{margin-top:8px}
+@media (max-width:1100px){.journey-roadmap{grid-template-columns:1fr}.journey-second,.journey-third{padding-top:0}}
+.rewards-list{list-style:none;margin:56px 0 0;padding:0;border-top:1px solid var(--line)}
+.rewards-list li{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:baseline;padding:28px 0;border-bottom:1px solid var(--line)}
+.rewards-list li>span{color:var(--sc-ink-soft);font-size:13px}
+.rewards-list p{margin:0;font-size:clamp(22px,2.6vw,36px);font-weight:600;letter-spacing:-.03em;line-height:1.15}
+@media (min-width:1280px){.project-folder-grid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:16px!important}}
+.fl-count{margin-top:14px!important;font-size:13px!important;color:var(--sc-ink)!important}
+.fl-package .fl-price{margin:18px 0!important;font-size:40px!important;font-weight:600;letter-spacing:-.03em;color:var(--sc-ink)!important}
+.fl-price span{font-size:14px;font-weight:400;color:var(--sc-ink-soft)}
+.fl-features{margin:0 0 24px;padding-left:18px;color:var(--sc-ink-soft);font-size:14px;line-height:1.7}
+.fl-custom{max-width:56ch;margin:40px 0 20px;color:var(--sc-ink-soft);font-size:15px;line-height:1.65}
+
+.freelance-service-list article>*:not(h3){grid-column:2}
+.freelance-service-list article>h3{grid-row:1/span 6}
+.fl-count{margin:0!important}
+.fl-package .fl-price{margin:0!important}
+.fl-package .freelance-engineering-link{justify-self:start;margin-top:8px}
+@media (max-width:700px){.freelance-service-list article>*:not(h3){grid-column:auto}.freelance-service-list article>h3{grid-row:auto}}
