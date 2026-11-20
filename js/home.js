@@ -281,6 +281,37 @@
   }
 
   /* ---------- experience roadmap: curved road between the stop markers ---------- */
+  /* Collapse long experience lists to ~5 lines with an animated chevron toggle */
+  function initJourneyMore() {
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var chevron = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>';
+    $('.journey-points').each(function (i) {
+      var ul = this, $ul = $(ul), id = 'journey-points-' + i;
+      $ul.attr('id', id).addClass('is-collapsed');
+      if (ul.scrollHeight <= ul.clientHeight + 4) { $ul.removeClass('is-collapsed'); return; }
+      var $btn = $('<button type="button" class="journey-more" aria-expanded="false" aria-controls="' + id + '" aria-label="Show more"><span class="journey-more-icon">' + chevron + '</span></button>');
+      $ul.after($btn);
+      function done() { ul.style.maxHeight = ''; if (window.ScrollTrigger) window.ScrollTrigger.refresh(); $(window).trigger('resize'); }
+      $btn.on('click', function () {
+        var opening = $ul.hasClass('is-collapsed');
+        $btn.attr('aria-expanded', String(opening)).attr('aria-label', opening ? 'Show less' : 'Show more').toggleClass('is-open', opening);
+        if (opening) {
+          var from = ul.clientHeight;
+          $ul.removeClass('is-collapsed');
+          if (reduce) return done();
+          gsap.fromTo(ul, { maxHeight: from }, { maxHeight: ul.scrollHeight, duration: 0.6, ease: 'power3.inOut', onComplete: done });
+        } else {
+          var cur = ul.offsetHeight;
+          ul.style.maxHeight = '';
+          $ul.addClass('is-collapsed');
+          var target = ul.clientHeight;
+          if (reduce) return done();
+          gsap.fromTo(ul, { maxHeight: cur }, { maxHeight: target, duration: 0.5, ease: 'power3.inOut', onComplete: done });
+        }
+      });
+    });
+  }
+
   function initRoadmap() {
     var map = $('.journey-roadmap')[0];
     if (!map) return;
@@ -333,6 +364,7 @@
       initTerminalText();
       initPortraitJourney();
       initProjects();
+      initJourneyMore();
       initRoadmap();
       initContact();
       initActiveSection();
