@@ -1,12 +1,12 @@
 /**
- * footer-crowd.js - the "Bengaluru Church Street" crowd drifting past the standing portrait.
+ * footer-crowd.js - the street crowd drifting past the standing portrait.
  * 105 sprites (7 sheets of 5x3), two canvas layers (behind / in front of the portrait).
  */
 (function ($) {
   'use strict';
 
   var SHEETS = Array.from({ length: 7 }, function (_, i) {
-    return 'assets/img/footer/bengaluru/crowd-0' + (i + 1) + '.webp';
+    return 'assets/img/footer/crowd/crowd-0' + (i + 1) + '.webp';
   });
   // per-sprite scale: 60 adults, 15 children (.7), 15 older (.95), 15 adults
   var SCALES = [].concat(rep(1, 60), rep(0.7, 15), rep(0.95, 15), rep(1, 15));
@@ -20,7 +20,7 @@
     var ctxs = canvases.map(function (c) { return c.getContext('2d'); });
     var img = scene.querySelector('img');
     var reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
-    var sheets = SHEETS.map(function (src) { var i = new Image(); i.src = src; return i; });
+    var sheets = [];
 
     var paused = false, reduced = reduceMQ.matches, destroyed = false, ready = false, visible = false;
     var width = 0, height = 0, dpr = 1, time = 0, last = 0, raf = 0, margin = 0, span = 0, people = [];
@@ -99,10 +99,18 @@
     document.addEventListener('visibilitychange', sync);
     syncAttrs();
 
-    Promise.all(sheets.map(function (i) { return i.decode(); })).then(function () {
-      if (destroyed) return;
-      ready = true; layout(); scene.setAttribute('data-ready', 'true');
-    }).catch(function () {});
+    /* load the 7 crowd sheets only once the footer is about to come into view */
+    function loadSheets() {
+      sheets = SHEETS.map(function (src) { var i = new Image(); i.src = src; return i; });
+      Promise.all(sheets.map(function (i) { return i.decode(); })).then(function () {
+        if (destroyed) return;
+        ready = true; layout(); scene.setAttribute('data-ready', 'true');
+      }).catch(function () {});
+    }
+    var lazy = new IntersectionObserver(function (en) {
+      if (en[0].isIntersecting) { lazy.disconnect(); loadSheets(); }
+    }, { rootMargin: '600px' });
+    lazy.observe(scene);
   }
 
   window.AppFooterCrowd = { init: init };
