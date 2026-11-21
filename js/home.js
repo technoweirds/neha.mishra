@@ -223,27 +223,6 @@
       show(null); $f.trigger('focus');
     });
     show(null);
-
-    /* SmartOps architecture walkthrough: CSV / PDF route */
-    var $exhibit = $('.architecture-exhibit');
-    if ($exhibit.length) {
-      var $btns = $exhibit.find('.route-switch button');
-      var icons = { csv: $btns.eq(0).find('svg').prop('outerHTML'), pdf: $btns.eq(1).find('svg').prop('outerHTML') };
-      var copy = {
-        csv: { label: 'Structured data', text: 'Calculations execute locally through Python for reliable numerical computation.' },
-        pdf: { label: 'Unstructured document', text: 'PDF text is embedded and searched through Qdrant for context-aware answers.' }
-      };
-      $btns.each(function (i) {
-        $(this).on('click', function () {
-          var route = i === 0 ? 'csv' : 'pdf';
-          $exhibit.attr('data-route', route);
-          $btns.each(function (j) { $(this).attr('aria-pressed', String(j === i)); });
-          $exhibit.find('.engine-node').each(function (j) { $(this).toggleClass('engine-active', j === i); });
-          $exhibit.find('.diagram-input').html($(icons[route]).attr({ width: 20, height: 20 }).prop('outerHTML') + '<span>' + copy[route].label + '</span>');
-          $exhibit.find('.route-explanation p').text(copy[route].text);
-        });
-      });
-    }
   }
 
   /* ---------- contact: copy e-mail + build a mailto draft ---------- */
