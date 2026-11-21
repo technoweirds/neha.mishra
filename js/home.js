@@ -244,18 +244,39 @@
 
     var $form = $('.contact-form');
     $form.on('change input', function () { $form.find('.draft-ready').remove(); });
+    /* submits to the Netlify form named "form"; falls back to an email draft if the post fails (e.g. opened as a local file) */
     $form.on('submit', function (e) {
       e.preventDefault();
-      if (!this.reportValidity()) return;
-      var fd = new FormData(this);
-      var body = 'Name: ' + fd.get('name') + '\nEmail: ' + fd.get('email') + '\n\n' + fd.get('project');
-      var href = 'mailto:nmishra1309@gmail.com?subject=' + encodeURIComponent('Portfolio inquiry') + '&body=' + encodeURIComponent(body);
-      $form.find('.draft-ready').remove();
-      var arrow = $form.find('.draft-button svg').first().clone().attr({ width: 18, height: 18 }).prop('outerHTML');
-      var $ready = $('<div class="draft-ready" role="status"><p>Your draft is ready.</p>' +
-        '<a class="draft-link wave-target" href="' + href + '"><span class="wave-text" data-wave="Open in email app"></span>' + arrow + '</a></div>');
-      $form.find('.contact-submit').after($ready);
-      App.buildWaveText($ready);
+      var formEl = this;
+      if (!formEl.reportValidity()) return;
+      var $btn = $form.find('.draft-button'), $label = $btn.find('.wave-text');
+      var original = $label.find('.sr-only').first().text() || 'Send message';
+      var say = function (msg, href, linkText) {
+        $form.find('.draft-ready').remove();
+        var link = href ? '<a class="draft-link wave-target" href="' + href + '"><span class="wave-text" data-wave="' + linkText + '"></span></a>' : '';
+        var $r = $('<div class="draft-ready" role="status"><p>' + msg + '</p>' + link + '</div>');
+        $form.find('.contact-submit').after($r);
+        if (href) App.buildWaveText($r);
+      };
+      var fd = new FormData(formEl);
+      var fallback = function () {
+        var body = 'Name: ' + fd.get('name') + '\nPhone: ' + (fd.get('phone') || '-') + '\n\n' + fd.get('message');
+        var href = 'mailto:nmishra1309@gmail.com?subject=' + encodeURIComponent('Portfolio inquiry') + '&body=' + encodeURIComponent(body);
+        say('Could not send the message from here.', href, 'Email me instead');
+      };
+      $btn.prop('disabled', true); $label.text('Sending…');
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(fd).toString()
+      }).then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        formEl.reset();
+        say('Your message was sent successfully. Thank you!');
+      }).catch(fallback).then(function () {
+        $btn.prop('disabled', false);
+        $label.empty().attr('data-wave', original); App.buildWaveText($btn);
+      });
     });
   }
 
