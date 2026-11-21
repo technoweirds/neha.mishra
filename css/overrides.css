@@ -147,3 +147,8 @@ html.debug-mode *{outline:1px solid rgba(255,0,110,.4)!important}
 .flow-diagram--stacked li{margin-right:0}
 .flow-diagram--stacked li:not(:last-child):after{left:24px;top:100%;width:1.5px;height:26px}
 .flow-diagram--stacked li:not(:last-child):before{left:21px;top:calc(100% + 18px);transform:rotate(135deg)}
+
+/* rewards: optional "View post" link on the right of each row */
+.rewards-list li{grid-template-columns:72px minmax(0,1fr) auto;column-gap:16px}
+.reward-link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--sc-ink);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:2px;white-space:nowrap}
+@media (max-width:700px){.rewards-list li{grid-template-columns:48px minmax(0,1fr)}.reward-link{grid-column:2;justify-self:start;margin-top:12px}}
